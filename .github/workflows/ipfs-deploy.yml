@@ -15,15 +15,20 @@ jobs:
 
     - name: Install IPFS
       run: |
-        wget https://dist.ipfs.tech/kubo/latest/kubo_latest_linux-amd64.tar.gz -O ipfs.tar.gz
-        tar -xvzf ipfs.tar.gz
-        sudo mv ipfs /usr/local/bin/
+        curl -O https://dist.ipfs.tech/kubo/kubo_v0.19.1_linux-amd64.tar.gz
+        tar -xvzf kubo_v0.19.1_linux-amd64.tar.gz
+        sudo mv kubo/ipfs /usr/local/bin/
 
     - name: Deploy Website to IPFS
       run: |
-        ipfs init
+        ipfs init || echo "IPFS already initialized."
         ipfs daemon --init &
         sleep 10
-        ipfs add -r ./website > deployment_log.txt
-        grep "added" deployment_log.txt | tail -1 | awk '{print $2}' > ipfs_cid.txt
-        echo "Website deployed to IPFS."
+        if [ -d ./website ]; then
+          ipfs add -r ./website > deployment_log.txt
+          grep "added" deployment_log.txt | tail -1 | awk '{print $2}' > ipfs_cid.txt
+          echo "Website deployed successfully."
+        else
+          echo "Error: 'website' directory does not exist in the repository."
+          exit 1
+        fi
