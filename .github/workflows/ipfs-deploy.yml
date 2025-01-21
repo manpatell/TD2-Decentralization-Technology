@@ -1,0 +1,29 @@
+name: Deploy to IPFS
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2
+
+    - name: Install IPFS
+      run: |
+        wget https://dist.ipfs.tech/kubo/latest/kubo_latest_linux-amd64.tar.gz -O ipfs.tar.gz
+        tar -xvzf ipfs.tar.gz
+        sudo mv ipfs /usr/local/bin/
+
+    - name: Deploy Website to IPFS
+      run: |
+        ipfs init
+        ipfs daemon --init &
+        sleep 10
+        ipfs add -r ./website > deployment_log.txt
+        grep "added" deployment_log.txt | tail -1 | awk '{print $2}' > ipfs_cid.txt
+        echo "Website deployed to IPFS."
