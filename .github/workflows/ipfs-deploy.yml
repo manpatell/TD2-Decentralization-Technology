@@ -15,9 +15,10 @@ jobs:
 
     - name: Install IPFS
       run: |
-        curl -O https://dist.ipfs.tech/kubo/kubo_v0.19.1_linux-amd64.tar.gz
+        curl -O https://dist.ipfs.tech/kubo/v0.19.1/kubo_v0.19.1_linux-amd64.tar.gz
         tar -xvzf kubo_v0.19.1_linux-amd64.tar.gz
         sudo mv kubo/ipfs /usr/local/bin/
+
 
     - name: Deploy Website to IPFS
       run: |
